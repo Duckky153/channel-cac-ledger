@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Cost per paid practice and per signed account by channel, experiment decisions from rules set in advance, and the rows a person should check. Synthetic data.">
+<title>Channel CAC Ledger</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <p class="eyebrow"><span class="pill">Synthetic data</span> Six months of acquisition data for software sold to dental practices, single offices and multi-location groups</p>
+    <h1>Channel CAC Ledger</h1>
+    <p class="result" id="result">Loading the ledger.</p>
+    <p class="sub">Synthetic data. Rules and prices are assumptions listed below. The sentence above uses the default settings: Blend credit, counted per paid practice, founder time left out.</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="error" class="error-banner" hidden></div>
+
+  <section class="controls" aria-label="Settings">
+    <fieldset>
+      <legend>Who gets credit</legend>
+      <div class="segmented" id="mode">
+        <label><input type="radio" name="mode" value="click"><span>Click (UTM)</span></label>
+        <label><input type="radio" name="mode" value="self"><span>Self-reported</span></label>
+        <label><input type="radio" name="mode" value="blend" checked><span>Blend</span></label>
+      </div>
+      <p class="hint" id="mode-hint"></p>
+    </fieldset>
+    <fieldset>
+      <legend>Count wins by</legend>
+      <div class="segmented" id="count-by">
+        <label><input type="radio" name="countBy" value="practice" checked><span>Paid practice</span></label>
+        <label><input type="radio" name="countBy" value="account"><span>Signed account</span></label>
+      </div>
+      <p class="hint" id="count-hint"></p>
+    </fieldset>
+    <fieldset>
+      <legend>Founder time</legend>
+      <div class="inline">
+        <label class="inline"><input type="checkbox" id="founder"> Include founder time at</label>
+        <span class="money-input">$<input type="text" id="founder-rate" value="100" inputmode="numeric" aria-label="Founder hourly rate in dollars" disabled><span>an hour</span></span>
+      </div>
+      <p class="field-error" id="rate-error" hidden>Enter a whole dollar amount from 0 to 2,000.</p>
+      <p class="hint">Founder hours go into lunch-and-learns, conference booths and partner calls.</p>
+    </fieldset>
+  </section>
+
+  <section id="channels" aria-labelledby="channels-h">
+    <h2 id="channels-h">Cost by channel</h2>
+    <p class="lede" id="channel-lede"></p>
+    <div class="table-wrap"><table id="channel-table"></table></div>
+    <p class="check" id="reconcile"></p>
+  </section>
+
+  <section id="experiments" aria-labelledby="experiments-h">
+    <h2 id="experiments-h">Experiments</h2>
+    <p class="lede">Each test had a hypothesis, a budget cap, a primary metric, a guardrail and a window, written before it ran. The decision comes only from those rules, checked in this order: most of the cap spent with no held demo, guardrail, no wins yet, too few wins, stop bar, scale bar.</p>
+    <div class="tally" id="tally"></div>
+    <div class="exp-grid" id="exp-grid"></div>
+  </section>
+
+  <a class="next-link" id="budget-link" href="budget.html">
+    <span>Turn these decisions into next month's spend: passing tests get more, unproven ones keep a capped test budget, failed ones stop.</span>
+    <strong>Next month's budget &rarr;</strong>
+  </a>
+
+  <section id="changed" aria-labelledby="changed-h">
+    <h2 id="changed-h">What changed this month</h2>
+    <p class="result" id="change-sentence"></p>
+    <p class="lede">Held demos, September against August, split by channel and practice type, so the few cells that drove the change are found before anyone decides what it means. Credit follows the setting above.</p>
+    <div class="table-wrap"><table id="change-table"></table></div>
+  </section>
+
+  <section id="exceptions" aria-labelledby="exceptions-h">
+    <h2 id="exceptions-h">Rows a person should check</h2>
+    <p class="lede">These rows are counted by a stated rule, but a rule can be wrong about them. Each one says how it was counted and why it's worth a look.</p>
+    <ul class="exceptions" id="exception-list"></ul>
+  </section>
+
+  <section id="assumptions" aria-labelledby="assumptions-h">
+    <h2 id="assumptions-h">Assumptions</h2>
+    <ul class="plain-list">
+      <li>Every office, group, date and dollar amount is made up: <span id="n-rows">the lead rows</span>, and the spend for April to September 2026.</li>
+      <li>A <strong>paid practice</strong> is one office location that started paying by September 30. A group that pays for only some of its offices counts only those; the rest are "expansion pending".</li>
+      <li>A <strong>signed account</strong> is one customer, whether it's one office or a group of 25.</li>
+      <li>Cost is media or vendor spend plus field costs (booth, travel, food). Founder hours count only when "Include founder time" is on, at the rate you set.</li>
+      <li><strong>Click (UTM)</strong> credits the ad or link the booking came from. <strong>Self-reported</strong> credits the answer to "How did you hear about us?". <strong>Blend</strong> takes the answer when it names a channel, otherwise the click. Anything else is Unknown and credited to no channel.</li>
+      <li>Each test's leads are tagged to that test when they arrive (a partner code, a booth scan, a postcard code or an ad campaign), so test decisions don't change with the credit setting. The channel table does.</li>
+      <li>If the same office books twice, it counts once, at its earliest touch, and keeps the furthest step either booking reached.</li>
+      <li>Under 3 paid practices (or accounts, when counting accounts) is "too few to call". One lucky deal isn't a channel.</li>
+      <li>The scale and stop bars, minimum wins, guardrails, caps and windows for each test are assumptions, as is the $100 an hour founder rate.</li>
+      <li>Recent spend has had less time to turn into paying practices (a pilot runs about four weeks), so the newest months look more expensive than they'll end up.</li>
+      <li>Money is kept in whole cents and shown in whole dollars, rounded down.</li>
+    </ul>
+  </section>
+
+  <section id="questions" aria-labelledby="questions-h">
+    <h2 id="questions-h">Questions I'd ask first</h2>
+    <ul class="plain-list">
+      <li>When a group signs, do you count one customer or one per office, and does price follow offices or providers?</li>
+      <li>When the demo booking's source and the "How did you hear about us?" answer disagree, which do you trust?</li>
+      <li>Do founder hours at lunch-and-learns and conferences count as acquisition cost?</li>
+      <li>What payback period would make you put more money into a channel?</li>
+    </ul>
+  </section>
+</main>
+
+<footer>Built by Dakshit Raj &middot; Synthetic data</footer>
+
+<script src="data.js"></script>
+<script src="ledger.mjs"></script>
+<script src="app.js"></script>
+</body>
+</html>
